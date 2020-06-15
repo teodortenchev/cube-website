@@ -2,7 +2,6 @@ const { v4 } = require('uuid');            //destructuring
 const fs = require('fs');
 const path = require('path');
 const dbFilePath = path.join(__dirname, '..', '/config/database.json');
-
  
  class Cube {
      constructor(name, description, imageUrl, difficulty) {

@@ -31,8 +31,6 @@ const dbFilePath = path.join(__dirname, '..', '/config/database.json');
             
             const cubes = JSON.parse(dbData);
 
-            console.log(cubes);
-
             cubes.push(newCube);
 
             fs.writeFile(dbFilePath, JSON.stringify(cubes), (err) => {

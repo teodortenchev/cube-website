@@ -1,8 +1,10 @@
 const { getCubes } = require('./database');
 
 
-const getAllCubes = () => {
-    return getCubes();
+const getAllCubes = (callback) => {
+    getCubes((cubes) => {
+        callback(cubes)
+    })
 }
 
 module.exports = {

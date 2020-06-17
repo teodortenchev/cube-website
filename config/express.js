@@ -1,8 +1,11 @@
 const express = require('express');
 const handlebars = require('express-handlebars');
-const bodyParser = require('body-parser');
 
 module.exports = (app) => {
+
+
+    app.use(express.json());
+    app.use(express.urlencoded());
 
     app.engine('.hbs', handlebars({
         extname: '.hbs'
@@ -10,6 +13,5 @@ module.exports = (app) => {
     app.set('view engine', '.hbs');
 
     app.use('/static', express.static('static'));
-    
 
 };

@@ -39,7 +39,15 @@ router.post('/create', (req, res) => {
     cube.save(() => {
         res.redirect('/');
     });
+<<<<<<< Updated upstream
 })
+=======
+});
+
+router.get('/details/:id', async (req, res) => {
+
+    const cube = await getCube(req.params.id);
+>>>>>>> Stashed changes
 
 router.get('/details/:id', (req, res) => {
     

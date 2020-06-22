@@ -13,7 +13,6 @@ const CubeSchema = new mongoose.Schema({
     imageUrl: {
         type: String,
         required: true,
-        //TO DO: Custom validation for https
     },
     difficulty: {
         type: Number,
@@ -26,5 +25,9 @@ const CubeSchema = new mongoose.Schema({
         ref: 'Accessory'
     }]
 });
+
+CubeSchema.path('imageUrl').validate(function (url){
+    return url.includes('http') || url.includes('https');
+}, "Image url is not valid")
 
 module.exports = mongoose.model('Cube', CubeSchema);

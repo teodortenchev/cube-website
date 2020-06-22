@@ -18,7 +18,6 @@ const getCubeWithAccessories = async (id) => {
     return cube;
 };
 
-
 const updateCube = async (cubeId, accessoryId) => {
     await Cube.findByIdAndUpdate(cubeId, {
         $addToSet: {

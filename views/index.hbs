@@ -7,8 +7,10 @@
   <input type="submit" value="search">
 </form>
 
-{{#each cubes}}
-    {{>cube}}
+{{#if dbHasCubes}}
+  {{#each cubes}}
+  {{>cube}}
+  {{/each}}
 {{else}}
-  <h1>No cubes in the DB.</h1>  
-{{/each}}
+  <h2>No cubes in the DB.</h2>
+{{/if}}

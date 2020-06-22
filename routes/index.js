@@ -6,9 +6,7 @@ const { getAllAccessories } = require('../controllers/accessories')
 const Cube = require('../models/cube');
 const Accessory = require('../models/accessory');
 
-
 router.get('/', async (req, res) => {
-
     const cubes = await getAllCubes();
     res.render('index', {
         title: 'Cube Workshop',
@@ -51,7 +49,6 @@ router.post('/create', (req, res) => {
 });
 
 router.get('/details/:id', async (req, res) => {
-
     const cube = await getCubeWithAccessories(req.params.id);
        
     res.render('details', {
@@ -85,7 +82,6 @@ router.post('/create/accessory', (req, res) => {
     });
 })
 
-
 router.get('/attach/accessory/:id', async (req, res) => {
 
     const cube = await getCube(req.params.id);
@@ -113,6 +109,5 @@ router.get('*', (req, res) => {
         title: 'ERROR'
     });
 })
-
 
 module.exports = router;

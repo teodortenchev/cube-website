@@ -24,6 +24,8 @@ const updateCube = async (cubeId, accessoryId) => {
             accessories: [accessoryId]
         }
     })
+
+    
 }
 
 module.exports = {

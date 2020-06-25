@@ -1,4 +1,5 @@
 const Cube = require('../models/cube');
+const { isValidObjectId } = require('mongoose');
 
 const getAllCubes = async () => {
     const cubes = await Cube.find().lean();
@@ -25,12 +26,34 @@ const updateCube = async (cubeId, accessoryId) => {
         }
     })
 
+
+}
+
+const editCube = async (cubeId, name, description, imageUrl, difficulty) => {
     
+    const cube = await getCube(cubeId);
+
+    await Cube.findByIdAndUpdate(cube._id, {
+        name: name,
+        description: description,
+        imageUrl: imageUrl,
+        difficulty: difficulty
+    });
+}
+
+
+const deleteCube = async (cubeId) => {
+    
+    const cube = await getCube(cubeId);
+
+    await Cube.deleteOne(cube._id);
 }
 
 module.exports = {
     getAllCubes,
     getCube,
     updateCube,
-    getCubeWithAccessories
+    getCubeWithAccessories,
+    deleteCube,
+    editCube
 };

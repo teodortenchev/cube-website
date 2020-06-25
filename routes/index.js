@@ -1,4 +1,3 @@
-// TODO: Require Controllers...
 const { Router } = require('express');
 const router = Router();
 const { getAllCubes, getCube, updateCube, getCubeWithAccessories } = require('../controllers/cubes');
@@ -102,12 +101,6 @@ router.post('/attach/accessory/:id', async (req, res) => {
     const accessories = await getAllAccessories();
 
     res.redirect(`/details/${req.params.id}`);
-})
-
-router.get('*', (req, res) => {
-    res.render('404', {
-        title: 'ERROR'
-    });
 })
 
 module.exports = router;

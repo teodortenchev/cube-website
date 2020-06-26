@@ -1,9 +1,10 @@
 const { Router } = require('express');
 const router = Router();
-const { getAllCubes, getCube, updateCube, getCubeWithAccessories } = require('../controllers/cubes');
+const { getAllCubes, getCube, updateCube, getCubeWithAccessories, deleteCube, editCube } = require('../controllers/cubes');
 const { getAllAccessories } = require('../controllers/accessories')
 const Cube = require('../models/cube');
 const Accessory = require('../models/accessory');
+const { getDifficultyString } = require('../helpers/cubeDifficulty');
 
 router.get('/', async (req, res) => {
     const cubes = await getAllCubes();
@@ -55,6 +56,46 @@ router.get('/details/:id', async (req, res) => {
         ...cube,
         hasAccessories: cube.accessories.length > 0
     })
+})
+
+router.get('/delete/:id', async (req, res) => {
+    const cube = await getCube(req.params.id);
+
+    res.render('delete', {
+        title: `Delete Cube ~ ${cube.name}`,
+        cubeDifficulty: getDifficultyString(cube.difficulty),
+        ...cube
+    })
+})
+
+router.post('/delete/:id', async (req, res) => {
+    
+    await deleteCube(req.params.id);
+
+    res.redirect('/');
+})
+
+router.get('/edit/:id', async (req, res) => {
+    const cube = await getCube(req.params.id);
+       
+    res.render('edit', {
+        title: `Edit ~ ${cube.name}`,
+        ...cube,
+    })
+})
+
+router.post('/edit/:id', async (req, res) => {
+    const {
+        name,
+        description,
+        imageUrl,
+        difficultyLevel
+    } = req.body;
+       
+    await editCube(req.params.id, name, description, imageUrl, difficultyLevel);
+
+    res.redirect(`/details/${req.params.id}`);
+
 })
 
 router.get('/create/accessory', (req, res) => {

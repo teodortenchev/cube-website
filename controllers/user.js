@@ -50,7 +50,13 @@ const verifyUser = async (req, res) => {
 
     const user = await User.findOne({ username });
 
+    if (!user) {
+        return false;
+    }
+
     const status = bcrypt.compare(password, user.password);
+
+
 
     if (status) {
         const token = generateToken({
@@ -64,7 +70,57 @@ const verifyUser = async (req, res) => {
     return status;
 }
 
+const isAuthenticated = (req, res, next) => {
+
+    const token = req.cookies['uid'];
+
+    if (!token) {
+        return res.redirect('/');
+    }
+
+    try {
+        const decodedObject = jwt.verify(token, privateKey);
+        next();
+    } catch (e) {
+        return res.redirect('/');
+    }
+}
+
+
+
+const isGuest = (req, res, next) => {
+
+    const token = req.cookies['uid'];
+
+    if (token) {
+        return res.redirect('/');
+    }
+
+    next();
+}
+
+const getUserStatus = (req, res, next) => {
+    const token = req.cookies['uid'];
+
+    if (!token) {
+        req.isLoggedIn = false;
+    }
+
+    try {
+        jwt.verify(token, privateKey);
+        req.isLoggedIn = true;
+    } catch (e) {
+        req.isLoggedIn = false;
+    }
+
+    next();
+}
+
+
 module.exports = {
     saveUser,
-    verifyUser
+    verifyUser,
+    isAuthenticated,
+    getUserStatus,
+    isGuest
 }

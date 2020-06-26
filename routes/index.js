@@ -1,18 +1,21 @@
 const { Router } = require('express');
 const router = Router();
 const { getAllCubes, getCube, updateCube, getCubeWithAccessories, deleteCube, editCube } = require('../controllers/cubes');
-const { getAllAccessories } = require('../controllers/accessories')
+const { getAllAccessories } = require('../controllers/accessories');
+const { isAuthenticated, getUserStatus } = require('../controllers/user');
 const Cube = require('../models/cube');
 const Accessory = require('../models/accessory');
 const { getDifficultyString } = require('../helpers/cubeDifficulty');
 const jwt = require('jsonwebtoken');
 
-router.get('/', async (req, res) => {
+
+router.get('/', getUserStatus, async (req, res) => {
     const cubes = await getAllCubes();
     res.render('index', {
         title: 'Cube Workshop',
         cubes,
-        dbHasCubes: cubes.length > 0
+        dbHasCubes: cubes.length > 0,
+        isLoggedIn: req.isLoggedIn
     });
 })
 
@@ -23,10 +26,13 @@ router.get('/about', (req, res) => {
     });
 })
 
-router.get('/create', (req, res) => {
+router.get('/create', isAuthenticated, getUserStatus, (req, res) => {
     res.render('create', {
-        title: 'Create ~ Cube Workshop'
+        title: 'Create ~ Cube Workshop',
+        isLoggedIn: req.isLoggedIn
+
     });
+
 })
 
 router.post('/create', (req, res) => {
@@ -52,23 +58,25 @@ router.post('/create', (req, res) => {
     });
 });
 
-router.get('/details/:id', async (req, res) => {
+router.get('/details/:id', getUserStatus, async (req, res) => {
     const cube = await getCubeWithAccessories(req.params.id);
 
     res.render('details', {
         title: 'Details',
         ...cube,
-        hasAccessories: cube.accessories.length > 0
+        hasAccessories: cube.accessories.length > 0,
+        isLoggedIn: req.isLoggedIn
     })
 })
 
-router.get('/delete/:id', async (req, res) => {
+router.get('/delete/:id', isAuthenticated, getUserStatus, async (req, res) => {
     const cube = await getCube(req.params.id);
 
     res.render('delete', {
         title: `Delete Cube ~ ${cube.name}`,
         cubeDifficulty: getDifficultyString(cube.difficulty),
-        ...cube
+        ...cube,
+        isLoggedIn: req.isLoggedIn
     })
 })
 
@@ -79,12 +87,13 @@ router.post('/delete/:id', async (req, res) => {
     res.redirect('/');
 })
 
-router.get('/edit/:id', async (req, res) => {
+router.get('/edit/:id', isAuthenticated, getUserStatus, async (req, res) => {
     const cube = await getCube(req.params.id);
 
     res.render('edit', {
         title: `Edit ~ ${cube.name}`,
         ...cube,
+        isLoggedIn: req.isLoggedIn
     })
 })
 
@@ -102,9 +111,10 @@ router.post('/edit/:id', async (req, res) => {
 
 })
 
-router.get('/create/accessory', (req, res) => {
+router.get('/create/accessory', isAuthenticated, getUserStatus, (req, res) => {
     res.render('createAccessory', {
-        title: 'Create Accessory ~ Cube Workshop'
+        title: 'Create Accessory ~ Cube Workshop',
+        isLoggedIn: req.isLoggedIn
     });
 })
 
@@ -126,7 +136,7 @@ router.post('/create/accessory', (req, res) => {
     });
 })
 
-router.get('/attach/accessory/:id', async (req, res) => {
+router.get('/attach/accessory/:id', isAuthenticated, getUserStatus, async (req, res) => {
 
     const cube = await getCube(req.params.id);
     const accessories = await getAllAccessories();
@@ -135,7 +145,8 @@ router.get('/attach/accessory/:id', async (req, res) => {
         title: 'Attach Accessory',
         ...cube,
         accessories,
-        hasAllAccessories: cube.accessories.length === accessories.length
+        hasAllAccessories: cube.accessories.length === accessories.length,
+        isLoggedIn: req.isLoggedIn
     })
 })
 

@@ -7,7 +7,6 @@ const Accessory = require('../models/accessory');
 const { getDifficultyString } = require('../helpers/cubeDifficulty');
 const jwt = require('jsonwebtoken');
 
-
 router.get('/', async (req, res) => {
     const cubes = await getAllCubes();
     res.render('index', {

@@ -5,6 +5,7 @@ const { getAllAccessories } = require('../controllers/accessories')
 const Cube = require('../models/cube');
 const Accessory = require('../models/accessory');
 const { getDifficultyString } = require('../helpers/cubeDifficulty');
+const jwt = require('jsonwebtoken');
 
 router.get('/', async (req, res) => {
     const cubes = await getAllCubes();
@@ -36,7 +37,10 @@ router.post('/create', (req, res) => {
         difficultyLevel
     } = req.body;
 
-    const cube = new Cube({ name, description, imageUrl, difficulty: difficultyLevel });
+    const token = req.cookies['uid'];
+    const decodedObject = jwt.verify(token, 'SampleKey'); //I wouldn't do that normally, key should never be shared anywhere.
+
+    const cube = new Cube({ name, description, imageUrl, difficulty: difficultyLevel, creatorId: decodedObject.userId });
 
     cube.save((err) => {
         if (err) {
@@ -50,7 +54,7 @@ router.post('/create', (req, res) => {
 
 router.get('/details/:id', async (req, res) => {
     const cube = await getCubeWithAccessories(req.params.id);
-       
+
     res.render('details', {
         title: 'Details',
         ...cube,
@@ -69,7 +73,7 @@ router.get('/delete/:id', async (req, res) => {
 })
 
 router.post('/delete/:id', async (req, res) => {
-    
+
     await deleteCube(req.params.id);
 
     res.redirect('/');
@@ -77,7 +81,7 @@ router.post('/delete/:id', async (req, res) => {
 
 router.get('/edit/:id', async (req, res) => {
     const cube = await getCube(req.params.id);
-       
+
     res.render('edit', {
         title: `Edit ~ ${cube.name}`,
         ...cube,
@@ -91,7 +95,7 @@ router.post('/edit/:id', async (req, res) => {
         imageUrl,
         difficultyLevel
     } = req.body;
-       
+
     await editCube(req.params.id, name, description, imageUrl, difficultyLevel);
 
     res.redirect(`/details/${req.params.id}`);
@@ -137,7 +141,7 @@ router.get('/attach/accessory/:id', async (req, res) => {
 
 router.post('/attach/accessory/:id', async (req, res) => {
     const { accessoryId } = req.body;
-    
+
     await updateCube(req.params.id, accessoryId)
     const accessories = await getAllAccessories();
 

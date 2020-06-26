@@ -5,8 +5,10 @@
   <p><span>Difficulty level:</span> {{difficulty}}</p>
   <a class="btn" href="/">Back</a> 
   <a class="btn" href="/attach/accessory/{{_id}}">Attach Accessory</a> 
+  {{#if isCubeCreator}}
   <a class="btn" href="/edit/{{_id}}">Edit</a> 
   <a class="btn" style="background-color: red" href="/delete/{{_id}}">Delete</a> 
+  {{/if}}
 </div>
 
 {{#if hasAccessories}}

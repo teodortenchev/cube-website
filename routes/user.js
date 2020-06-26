@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const router = Router();
-const { saveUser, verifyUser, isAuthenticated, isGuest } = require('../controllers/user');
+const { saveUser, verifyUser, isGuest } = require('../controllers/user');
 
 router.get('/login', isGuest, (req, res) => {
     res.render('user/login', {

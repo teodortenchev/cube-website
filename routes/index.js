@@ -2,7 +2,7 @@ const { Router } = require('express');
 const router = Router();
 const { getAllCubes, getCube, updateCube, getCubeWithAccessories, deleteCube, editCube } = require('../controllers/cubes');
 const { getAllAccessories } = require('../controllers/accessories');
-const { isAuthenticated, getUserStatus } = require('../controllers/user');
+const { isAuthenticated, getUserStatus, isCubeCreator } = require('../controllers/user');
 const Cube = require('../models/cube');
 const Accessory = require('../models/accessory');
 const { getDifficultyString } = require('../helpers/cubeDifficulty');
@@ -35,7 +35,7 @@ router.get('/create', isAuthenticated, getUserStatus, (req, res) => {
 
 })
 
-router.post('/create', (req, res) => {
+router.post('/create', isAuthenticated, (req, res) => {
     const {
         name,
         description,
@@ -65,12 +65,18 @@ router.get('/details/:id', getUserStatus, async (req, res) => {
         title: 'Details',
         ...cube,
         hasAccessories: cube.accessories.length > 0,
-        isLoggedIn: req.isLoggedIn
+        isLoggedIn: req.isLoggedIn,
+        isCubeCreator: isCubeCreator(cube.creatorId, req)
+
     })
 })
 
 router.get('/delete/:id', isAuthenticated, getUserStatus, async (req, res) => {
     const cube = await getCube(req.params.id);
+
+    if (!isCubeCreator(cube.creatorId, req)) {
+        return res.redirect('/');
+    }
 
     res.render('delete', {
         title: `Delete Cube ~ ${cube.name}`,
@@ -90,6 +96,10 @@ router.post('/delete/:id', async (req, res) => {
 router.get('/edit/:id', isAuthenticated, getUserStatus, async (req, res) => {
     const cube = await getCube(req.params.id);
 
+    if (!isCubeCreator(cube.creatorId, req)) {
+        return res.redirect('/');
+    }
+
     res.render('edit', {
         title: `Edit ~ ${cube.name}`,
         ...cube,
@@ -104,6 +114,7 @@ router.post('/edit/:id', async (req, res) => {
         imageUrl,
         difficultyLevel
     } = req.body;
+
 
     await editCube(req.params.id, name, description, imageUrl, difficultyLevel);
 

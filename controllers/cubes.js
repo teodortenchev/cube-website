@@ -43,10 +43,7 @@ const editCube = async (cubeId, name, description, imageUrl, difficulty) => {
 
 
 const deleteCube = async (cubeId) => {
-    
-    const cube = await getCube(cubeId);
-
-    await Cube.deleteOne(cube._id);
+    await Cube.findByIdAndDelete(cubeId);
 }
 
 module.exports = {

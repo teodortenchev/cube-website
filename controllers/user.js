@@ -86,8 +86,6 @@ const isAuthenticated = (req, res, next) => {
     }
 }
 
-
-
 const isGuest = (req, res, next) => {
 
     const token = req.cookies['uid'];
@@ -116,11 +114,27 @@ const getUserStatus = (req, res, next) => {
     next();
 }
 
+const isCubeCreator = (cubeUserId, req) => {
+    const token = req.cookies['uid'];
+
+    if (token) {
+        const decodedObject = jwt.verify(token, privateKey);
+        const userId = decodedObject.userId;
+
+        if (userId == cubeUserId) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 
 module.exports = {
     saveUser,
     verifyUser,
     isAuthenticated,
     getUserStatus,
-    isGuest
+    isGuest,
+    isCubeCreator
 }

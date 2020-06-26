@@ -10,10 +10,7 @@ const generateToken = data => {
     return token;
 }
 
-
-
 const saveUser = async (req, res) => {
-
     const {
         username,
         password,

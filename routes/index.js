@@ -68,6 +68,13 @@ router.get('/delete/:id', async (req, res) => {
     })
 })
 
+router.post('/delete/:id', async (req, res) => {
+    
+    await deleteCube(req.params.id);
+
+    res.redirect('/');
+})
+
 router.get('/edit/:id', async (req, res) => {
     const cube = await getCube(req.params.id);
        
@@ -90,15 +97,6 @@ router.post('/edit/:id', async (req, res) => {
     res.redirect(`/details/${req.params.id}`);
 
 })
-
-
-router.post('/delete/:id', async (req, res) => {
-    
-    await deleteCube(req.params.id);
-
-    res.redirect('/');
-})
-
 
 router.get('/create/accessory', (req, res) => {
     res.render('createAccessory', {
